@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .card {
+            width: 400px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        .card h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            width: calc(100% - 22px); /* Adjusted to account for padding and border */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .submit-button {
+            width: calc(100% - 22px); /* Adjusted to account for padding and border */
+            padding: 10px;
+            border: none;
+            border-radius: 12px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px; /* Added margin to separate from input field */
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            display: none;
+            text-align: left;
+        }
+
+        .result-container h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .result-container p {
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Dictionary App</h1>
+        <div class="search-container">
+            <input id="search-bar" type="text" class="search-bar" placeholder="Enter your word">
+            <button class="submit-button" onclick="searchWord()">Submit</button>
+        </div>
+        <div id="result-container" class="result-container">
+            <h2 id="word"></h2>
+            <p id="definition"></p>
+        </div>
+    </div>
+
+    <script>
+        async function searchWord() {
+            const apiKey = '0nI6U1NkZ5X1uOLRq0HiUQ==xFRi6LaFEfRpk7fz'; // Replace with your actual API key
+            const word = document.getElementById('search-bar').value;
+
+            if (word.trim() === '') {
+                alert('Please enter a word to search.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.api-ninjas.com/v1/dictionary?word=${word}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Api-Key': apiKey
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('API Response:', data); // Log the response for debugging
+                    if (data.definition) {
+                        document.getElementById('word').textContent = word;
+                        document.getElementById('definition').textContent = data.definition;
+                        document.getElementById('result-container').style.display = 'block';
+                    } else {
+                        document.getElementById('word').textContent = 'No results found';
+                        document.getElementById('definition').textContent = '';
+                        document.getElementById('result-container').style.display = 'block';
+                    }
+                } else {
+                    console.error('Error fetching data:', response.status, response.statusText);
+                    alert('Error fetching data. Please try again.');
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                alert('Error fetching data. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
